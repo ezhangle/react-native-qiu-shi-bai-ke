@@ -7,16 +7,13 @@ import RefreshListView, { RefreshState } from '../../ui/RefreshListView'
 import ListRequest from '../../common/ListRequest'
 
 import StoryCell from './StoryCell'
-import config from '../../Config'
-
-const kPageSize = 3;
 
 // create a component
 class StoryListScene extends Component {
     constructor(props) {
         super(props)
 
-        let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
         this.state = {
             dataSource: ds.cloneWithRows([]),
             page: 0,

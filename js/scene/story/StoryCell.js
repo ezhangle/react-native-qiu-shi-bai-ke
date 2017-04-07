@@ -6,14 +6,8 @@ import system from '../../common/System'
 
 // create a component
 class StoryCell extends Component {
+    
     render() {
-
-        // NSDictionary *vote = [NSDictionary dictionaryWithDictionary:[dictionary objectForKey:@"votes"]];
-        // self.hateCount = [[vote objectForKey:@"down"] integerValue];
-        // self.likeCount = [[vote objectForKey:@"up"] integerValue];
-
-        // id user = [dictionary objectForKey:@"user"];
-
         let info = this.props.info;
 
         let image = null;
