@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Platform} from 'react-native';
 import { Router, Scene, Actions, Schema } from 'react-native-router-flux';
 
 import * as system from './common/System'
-import TabBarItem from './common/TabBarItem'
+import TabBarItem from './ui/TabBarItem'
 
 import HomeScene from './scene/HomeScene'
 import PictureScene from './scene/PictureScene'

@@ -1,7 +1,7 @@
 //import liraries
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Heading1, Paragraph, Tip } from '../../common/Text';
+import { Heading1, Paragraph, Tip } from '../../ui/Text';
 import system from '../../common/System'
 
 // create a component

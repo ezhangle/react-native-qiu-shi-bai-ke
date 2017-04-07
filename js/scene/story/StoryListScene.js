@@ -3,10 +3,11 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, ListView, RefreshControl, ActivityIndicator } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
-import RefreshListView, { RefreshState } from '../../common/RefreshListView'
+import RefreshListView, { RefreshState } from '../../ui/RefreshListView'
+import ListRequest from '../../common/ListRequest'
 
 import StoryCell from './StoryCell'
-import config from '../../common/Config'
+import config from '../../Config'
 
 const kPageSize = 3;
 
@@ -15,51 +16,31 @@ class StoryListScene extends Component {
     constructor(props) {
         super(props)
 
-        this.dataList = [];
-
         let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         this.state = {
             dataSource: ds.cloneWithRows([]),
             page: 0,
         };
+
+        this.listRequest = new ListRequest(this.props.requestNode)
+        this.listRequest.onSuccess = () => {
+            this.setState({
+                dataSource: this.state.dataSource.cloneWithRows(this.listRequest.dataList)
+            })
+            let footerState = this.listRequest.noMoreData ? RefreshState.NoMoreData : RefreshState.Idle
+            this.refs.listView.endRefreshing(footerState)
+        }
+        this.listRequest.onFailure = () => {
+            this.refs.listView.endRefreshing(RefreshState.Failure)
+        }
     }
 
     componentDidMount() {
         this.refs.listView.startHeaderRefreshing();
     }
 
-    requestList(isReload: boolean) {
-        let page = this.state.page + 1;
-        let url = `${config.host}${this.props.requestNode}?page=${page}&count=${kPageSize}`
-        fetch(url)
-            .then((response) => response.json())
-            .then((json) => {
-                if (isReload) {
-                    this.dataList = json.items;
-                } else {
-                    this.dataList.push(...json.items);
-                }
-
-                this.setState({
-                    page: page,
-                    dataSource: this.state.dataSource.cloneWithRows(this.dataList)
-                })
-
-                let footerState = RefreshState.Idle
-                if (json.items.count < kPageSize) {
-                    footerState = RefreshState.NoMoreData
-                }
-                this.refs.listView.endRefreshing(RefreshState.Idle)
-
-                console.log('Success!! page:' + page);
-            }).catch((error) => {
-                console.log('error  ' + error);
-                this.refs.listView.endRefreshing(RefreshState.Failure)
-            });
-    }
-
     selectRow(rowData) {
-        Actions.storyDetail({info: rowData})
+        Actions.storyDetail({ info: rowData })
     }
 
     render() {
@@ -74,14 +55,12 @@ class StoryListScene extends Component {
                             onPress={() => this.selectRow(rowData)}
                         />
                     }
-                    onHeaderRefresh={() => this.requestList(true)}
-                    onFooterRefresh={() => this.requestList(false)}
+                    onHeaderRefresh={() => this.listRequest.requestFirstPage()}
+                    onFooterRefresh={() => this.listRequest.requestNextPage()}
                 />
             </View>
         );
     }
-
-
 }
 
 // define your styles
@@ -89,13 +68,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#ffffff',
-    },
-    footerContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 5
     },
 });
 

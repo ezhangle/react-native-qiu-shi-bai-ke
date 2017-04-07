@@ -5,7 +5,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import ScrollableTabView, { DefaultTabBar } from 'react-native-scrollable-tab-view';
 
 import StoryList from './StoryListScene'
-import color from '../../common/Color'
+import color from '../../ui/Color'
 
 // create a component
 class StoryScene extends Component {
